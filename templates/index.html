@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Auto Clickboard</title>
+  <link rel="stylesheet" type="text/css" href="/popup.css">
+  <link rel="stylesheet" type="text/css" href="/reset.css">
+  <link rel="icon" type="image/png" href="/images/mouse-keyboard.png"></link>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+  <link href='https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css' rel='stylesheet'>
+</head>
+<body>
+<section id="home">
+  <div class="container">
+    <div class="actions-section">
+      <div class="actions-title">
+        <h2>Start&nbsp;<i class="fa-solid fa-circle" style="color: #1eb838;text-shadow: 1px 2px 3px gray;"></i></h2>
+      </div>
+      <div class="actions">
+        <button class="custom-btn record-button" onclick="toggleRecord()" id="recordButton">
+          <span id="recordText">Record</span>&nbsp;<i class="fa-solid fa-play" id="recordIcon"></i>
+        </button>
+        <button class="custom-btn" id="loopButton" onclick="toggleLoop()">
+          <span id="loopText">Loop</span>&nbsp;<i class="fa-solid fa-rotate-left rotate-icon"></i>
+        </button>
+      </div>
+
+      <p id="pEsc" style="display: none;">Press Esc to stop</p>
+      
+    </div>
+    <div class="params-section">
+      <h2 style="cursor: pointer;">Parameters&nbsp;<i class="fa-solid fa-sliders" style="text-shadow: 1px 1px 1px grey;"></i></h2>
+      <form method="post" action="/update_parameters" id="parametersForm">
+        <div class="general-settings" style="display: none;">
+          <h3>General<i class='bx bxs-chevron-down htmlcss-arrow arrow'></i></h3>
+          <div class="settings-gen" style="display: none;">
+            <div class="delayBeforeStart">
+              <label for="delayBeforeStart">Delay before start (s)</label>
+              <input placeholder="0" type="number" id="delayBeforeStart" name="delayBeforeStart">
+            </div>
+            <div class="recordingDuration">
+              <label for="recordingDuration">Recording duration (s)</label>
+              <input placeholder="300" type="number" id="recordingDuration" name="recordingDuration">
+            </div>
+            <div class="pauseLoops">
+              <label for="pauseLoops">Pause between loops (s)</label>
+              <input placeholder="0" type="number" id="pauseLoops" name="pauseLoops">
+            </div>
+            <div class="totalLoops">
+              <label for="totalLoops">Total number of loops</label>
+              <input placeholder="1" type="number" id="totalLoops" name="totalLoops">
+            </div>
+          </div>
+        </div>
+
+        <div class="mouse-settings" style="display: none;">
+          <h3>Mouse<i class='bx bxs-chevron-down htmlcss-arrow arrow'></i></h3>
+          <div class="settings-mou" style="display: none;">
+            <div class="pauseClicks">
+              <label for="pauseClicks">Pause between clicks (s)</label>
+              <input placeholder="0.1" type="number" id="pauseClicks" name="pauseClicks">
+            </div>
+            <div class="showCursor">
+              <label for="showCursor">Show cursor movement</label>
+              <select id="showCursor" name="showCursor">
+                <option value="true" selected>True</option>
+                <option value="false">False</option>
+              </select>
+            </div>  
+            <div class="cursorSpeed">
+              <label for="cursorSpeed">Mouse movement speed</label>
+              <select id="cursorSpeed" name="cursorSpeed">
+                <option value="3">Slow</option>
+                <option value="1.5" selected>Medium</option>
+                <option value="0.5">Fast</option>
+              </select>
+            </div>
+            <div class="cursorStyle">
+              <label for="cursorStyle">Mouse movement</label>
+              <select id="cursorStyle" name="cursorStyle">
+                <option value="easeInQuad" selected>Start slow, end fast</option>
+                <option value="easeOutQuad">Start fast, end slow</option>
+                <option value="easeInOutQuad">Start/end fast, slow in middle</option>
+                <option value="easeInBounce">Bounce at the end</option>
+                <option value="easeInElastic">Elastic at the end</option>
+              </select>
+            </div> 
+            <div class="cursorRandomize">
+              <label for="cursorRandomize">Add randomness to clicks</label>
+              <select id="cursorRandomize" name="cursorRandomize">
+                <option value="true">True</option>
+                <option value="false" selected>False</option>
+              </select>
+              </label>
+            </div>
+            <div class="reverseScroll">
+              <label for="reverseScroll">Reverse scroll</label>
+              <select id="reverseScroll" name="reverseScroll">
+                <option value="-1">True</option>
+                <option value="1" selected>False</option>
+              </select>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="keyboard-settings" style="display: none;">
+          <h3>Keyboard<i class='bx bxs-chevron-down htmlcss-arrow arrow'></i></h3>
+          <div class="settings-key" style="display: none;">
+            <div class="keyboardType">
+              <label for="keyboardType">Keyboard Type</label>
+              <select id="keyboardType" name="keyboardType">
+                <option value="azerty" {% if keyboard_type == 'azerty' %}selected{% endif %}>AZERTY</option>
+                <option value="qwerty" {% if keyboard_type == 'qwerty' %}selected{% endif %}>QWERTY</option>
+              </select>
+            </div>
+            <div class="pauseKeyPress">
+              <label for="pauseKeyPress">Pause between key press (s)</label>
+              <input placeholder="0.1" type="number" id="pauseKeyPress" name="pauseKeyPress">
+            </div>
+          </div>
+        </div>
+        
+      </form>
+      <div class="submit" style="display: none;">
+        <button class="custom-btn" type="button" id="updateButton">Update</button>
+      </div>
+      <div class="anim" style="display: none;"></div>
+    
+    </div>
+  </div>
+</section>
+
+<script>
+  // Fonction pour basculer l'affichage
+  function toggleDisplay(className) {
+    const element = document.querySelector(`.${className}`);
+    if (element) {
+      element.style.display = (element.style.display === 'none' || !element.style.display) ? 'flex' : 'none';
+    }
+  }
+
+  // Ajoutez des écouteurs d'événements pour chaque h3
+  document.addEventListener('DOMContentLoaded', function () {
+    // Général
+    const generalSettingsHeader = document.querySelector('.general-settings h3');
+    if (generalSettingsHeader) {
+      generalSettingsHeader.addEventListener('click', function () {
+        toggleDisplay('settings-gen');
+      });
+    }
+
+    // Souris
+    const mouseSettingsHeader = document.querySelector('.mouse-settings h3');
+    if (mouseSettingsHeader) {
+      mouseSettingsHeader.addEventListener('click', function () {
+        toggleDisplay('settings-mou');
+      });
+    }
+
+    // Clavier
+    const keyboardSettingsHeader = document.querySelector('.keyboard-settings h3');
+    if (keyboardSettingsHeader) {
+      keyboardSettingsHeader.addEventListener('click', function () {
+        toggleDisplay('settings-key');
+      });
+    }
+
+    // Parameters
+    const parametersHeader = document.querySelector('.params-section h2');
+    if (parametersHeader) {
+      parametersHeader.addEventListener('click', function () {
+        toggleDisplay('general-settings');
+        toggleDisplay('mouse-settings');
+        toggleDisplay('keyboard-settings');
+        toggleDisplay('submit');
+      });
+    }
+  });
+</script>
+
+<script>
+  let isRotating = false;
+
+// Fonction pour basculer la boucle (démarrer/arrêter)
+function toggleLoop() {
+  const iconElement = document.querySelector('.rotate-icon');
+  const loopText = document.getElementById('loopText');
+  const pEsc = document.getElementById('pEsc');
+
+  // Vérifiez si l'icône est déjà en mode animation
+  if (!isRotating) {
+    // Ajoutez la classe d'animation
+    iconElement.classList.add('rotate-animation');
+    pEsc.style.display = 'flex';
+    // Changez le texte du bouton
+    loopText.textContent = 'Looping';
+    // Appeler la fonction startLoop ici si nécessaire
+    startLoop();
+  } else {
+    // Retirez la classe après un délai pour permettre à l'animation de se terminer
+    iconElement.classList.remove('rotate-animation');
+    pEsc.style.display = 'none';
+    // Changez le texte du bouton
+    loopText.textContent = 'Loop';
+    // Ajouter le code pour arrêter la boucle si nécessaire
+  }
+
+  // Inversez l'état du drapeau
+  isRotating = !isRotating;
+}
+
+// Fonction pour gérer l'appui sur la touche Échap
+function handleEscapeKey(event) {
+  if (event.key === 'Escape') {
+    if (isRotating) {
+      // Arrêtez la rotation
+      toggleLoop();
+    }
+    if (isRecording) {
+      // Arrêtez l'enregistrement
+      toggleRecord();
+    }
+  }
+}
+
+// Ajoutez un écouteur d'événements pour la touche Échap
+document.addEventListener('keydown', handleEscapeKey);
+</script>
+
+<script>
+  let isRecording = false;
+
+function toggleRecord() {
+  const recordIcon = document.getElementById('recordIcon');
+  const recordText = document.getElementById('recordText');
+  const pEsc = document.getElementById('pEsc');
+
+  // Inversez l'état du drapeau
+  isRecording = !isRecording;
+
+  if (isRecording) {
+    // Démarrez le clignotement et changez l'icône en fa-stop
+    recordIcon.classList.add('blinking');
+    recordIcon.classList.remove('fa-play');
+    recordIcon.classList.add('fa-stop');
+    pEsc.style.display = 'flex';
+    // Changez le texte du bouton
+    recordText.textContent = 'Recording';
+    // Appeler la fonction startRecord ici si nécessaire
+    startRecord();
+  } else {
+    // Arrêtez le clignotement et changez l'icône en fa-play
+    recordIcon.classList.remove('blinking');
+    recordIcon.classList.remove('fa-stop');
+    recordIcon.classList.add('fa-play');
+    pEsc.style.display = 'none';
+    // Changez le texte du bouton
+    recordText.textContent = 'Record';
+    // Ajouter le code pour arrêter l'enregistrement si nécessaire
+    stopRecord();
+  }
+}
+
+function startRecord() {
+  fetch('/start_record')
+    .then(response => response.text())
+    .then(data => console.log(data));
+}
+
+function stopRecord() {
+  fetch('/stop_record')
+    .then(response => response.text())
+    .then(data => console.log(data));
+}
+</script>
+
+<!-- Record script -->
+<script>
+  function startRecord() {
+    fetch('/start_record')
+      .then(response => response.text())
+      .then(data => console.log(data));
+  }
+</script>
+
+<!-- Start Loop script -->
+<script>
+  function startLoop() {
+    fetch('/start_loop')
+      .then(response => response.text())
+      .then(data => console.log(data));
+  }
+</script>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const updateButton = document.getElementById('updateButton');
+    const mouseSettings = document.querySelector('.mouse-settings');
+    const keyboardSettings = document.querySelector('.keyboard-settings');
+    const generalSettings = document.querySelector('.general-settings');
+    const mouSettings = document.querySelector('.settings-mou');
+    const keySettings = document.querySelector('.settings-key');
+    const genSettings = document.querySelector('.settings-gen');
+    const submitButton = document.querySelector('.submit');
+    const anim = document.querySelector('.anim');
+
+    if (updateButton) {
+      updateButton.addEventListener('click', function () {
+        updateParameters();
+        submitButton.style.display = 'none';
+        mouseSettings.style.display = 'none';
+        keyboardSettings.style.display = 'none';
+        generalSettings.style.display = 'none';
+        mouSettings.style.display = 'none';
+        keySettings.style.display = 'none';
+        genSettings.style.display = 'none';
+        anim.style.display = 'flex';
+        anim.style.height = '70px';
+        animation.play();
+        setTimeout(function () {
+          anim.style.display = 'none';
+        }, 2000);
+      });
+    }
+  });
+
+  function updateParameters() {
+    // Récupérer les valeurs du formulaire
+    const formData = new FormData(document.getElementById('parametersForm'));
+
+    // Effectuer la requête POST
+    fetch('/update_parameters', {
+      method: 'POST',
+      body: formData
+    })
+    .then(response => response.text())
+    .then(data => console.log(data))
+    .catch(error => console.error('Error:', error));
+  }
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/lottie-web@5.7.8/build/player/lottie.min.js"></script>
+<script>
+  // Récupérer l'élément conteneur
+  const container = document.querySelector('.anim');
+
+  // Charger l'animation JSON avec Lottie
+  const animation = lottie.loadAnimation({
+      container: container, // Le conteneur pour l'animation
+      renderer: 'svg', // Le type de rendu (peut être 'svg', 'canvas', etc.)
+      loop: true, // Si l'animation doit boucler
+      autoplay: false, // Si l'animation doit démarrer automatiquement
+      path: '/check.json' // Le chemin vers votre fichier JSON
+  });
+</script> 
+
+</body>
+</html>

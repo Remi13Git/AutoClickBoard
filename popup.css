@@ -1,0 +1,256 @@
+body {
+    font-family: Arial, sans-serif;
+}
+#home {
+  display: flex;
+  height: 500px;
+  width: 300px;
+  margin: auto;
+  padding-top: 100px;
+}
+#home .container {
+  display: flex;
+  flex-direction: column;
+  background: radial-gradient(circle, #ebe4c3, #d0c48cf0);
+  border-radius: 20px;
+  padding: 20px;
+  height: fit-content;
+  max-height: 400px;
+  box-shadow: 0px 6px 6px rgba(0, 0, 0, 0.23);
+  -moz-box-shadow: 0px 6px 6px rgba(0, 0, 0, 0.23);
+  -o-box-shadow: 0px 6px 6px rgba(0, 0, 0, 0.23);
+  -webkit-box-shadow: 0px 6px 6px rgba(0, 0, 0, 0.23);
+}
+#home h2 {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 10px;
+  font-size: 40px;
+}
+#home h2 i {
+  font-size: 25px;
+  height: 100%;
+  margin: auto 0;
+}
+#home .params-section h2 i {
+  font-size: 30px;
+}
+#home h3 {
+  font-size: 30px;
+}
+#home .params-section h3 i {
+  font-size: 20px;
+}
+#home .actions-section .actions {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+#home .actions-section i {
+  margin-left: 2px;
+}
+#home .actions-section p {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0 0;
+}
+
+#home .actions-section {
+  margin-bottom: 20px;
+}
+#home .params-section {
+  overflow: auto;
+}
+#home .params-section form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+#home .general-settings, .mouse-settings, .keyboard-settings {
+  flex-direction: column;
+}
+#home .params-section .settings-gen, .settings-mou, .settings-key {
+  margin: 0px 0 10px ;
+  flex-direction: column;
+}
+.delayBeforeStart, .recordingDuration, .pauseLoops, .totalLoops, .pauseClicks, 
+.showCursor, .cursorSpeed, .cursorStyle, .cursorRandomize, .reverseScroll, 
+.keyboardType, .pauseKeyPress {
+  display: flex;
+  flex-direction: column;
+}
+
+#home input, #home select {
+  color: grey;
+  margin-bottom: 5px;
+}
+#home label {
+  font-weight: 500;
+  margin: 10px 0 0px;
+}
+
+#home .settings-gen input {
+  width: 40px;
+  margin-right: auto;
+  text-align: center;
+  border: solid 1px black;
+}
+#home .settings-mou select {
+  width: 70px;
+  margin-right: auto;
+  text-align: center;
+  border: solid 1px black;
+}
+#home .settings-mou input {
+  width: 60px;
+  margin-right: auto;
+  text-align: center;
+  border: solid 1px black;
+}
+#home .settings-key select {
+  width: 80px;
+  margin-right: auto;
+  text-align: center;
+  border: solid 1px black;
+}
+#home .settings-key input {
+  width: 70px;
+  margin-right: auto;
+  text-align: center;
+  border: solid 1px black;
+}
+
+#home .submit {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+
+/* CUSTOM BUTTON */
+.custom-btn {
+  width: 100px;
+  height: 35px;
+  color: #fff;
+  border-radius: 5px;
+  padding: 10px;
+  font-family: "Poppins", sans-serif;
+  font-weight: 500;
+  background: transparent;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  display: inline-block;
+  box-shadow: inset 2px 2px 2px 0px rgba(255, 255, 255, 0.5),
+    7px 7px 20px 0px rgba(0, 0, 0, 0.1), 4px 4px 5px 0px rgba(0, 0, 0, 0.1);
+  outline: none;
+  line-height: 13px;
+}
+.custom-btn {
+  background-color: #fff;
+  background-image: linear-gradient(0deg, #000 -80%, #1eb838 74%);
+  border: none;
+}
+/* .custom-btn:before,
+.custom-btn:after {
+  position: absolute;
+  content: "";
+  height: 0%;
+  width: 1px;
+}
+.custom-btn:before {
+  right: 0;
+  top: 0;
+  transition: all 500ms ease;
+}
+.custom-btn:after {
+  left: 0;
+  bottom: 0;
+  transition: all 500ms ease;
+}
+.custom-btn:hover {
+  background: white;
+  color: #76aef1;
+  box-shadow: none;
+}
+.custom-btn:hover:before {
+  transition: all 500ms ease;
+  height: 100%;
+}
+.custom-btn:hover:after {
+  transition: all 500ms ease;
+  height: 100%;
+}
+.custom-btn span:before,
+.custom-btn span:after {
+  position: absolute;
+  content: "";
+}
+.custom-btn span:before {
+  left: 0;
+  top: 0;
+  width: 0%;
+  height: 0.5px;
+  transition: all 500ms ease;
+}
+.custom-btn span:after {
+  right: 0;
+  bottom: 0;
+  width: 0%;
+  height: 0.5px;
+  transition: all 500ms ease;
+}
+.custom-btn span:hover:before {
+  width: 100%;
+}
+.custom-btn span:hover:after {
+  width: 100%;
+} */
+
+/* Rotate Animation */
+@keyframes rotateAndPause {
+  0% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(-720deg);
+  }
+  100% {
+    transform: rotate(-720deg);
+  }
+}
+.rotate-icon {
+  transition: transform 1s linear; /* Réduisez la durée de la transition pour une rotation plus rapide */
+}
+.rotate-animation {
+  animation: rotateAndPause 1.5s linear infinite; /* Ajustez la durée totale de l'animation selon vos besoins */
+}
+
+/* Blinkinh animation  */
+.blinking {
+  animation: blink-animation 1.5s steps(5, start) infinite;
+}
+
+@keyframes blink-animation {
+  to {
+    visibility: hidden;
+  }
+}
+
+.record-button .fa-stop {
+  color: red;
+}
+
+#recordButton {
+  display: flex;
+  justify-content: center;
+}
+
+
+/* Check Animation */
+.anim {
+  display: none;
+  height: 0;
+  overflow: hidden;
+  transition: height 2s;
+}
